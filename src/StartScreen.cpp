@@ -111,20 +111,20 @@ void StartScreen::Update(sf::Time deltaTime)
 
     if (startButtonSelected)
     {
-        startButton.setColor(sf::Color::Green);
+        startButton.setFillColor(sf::Color::Green);
     }
     else
     {
-        startButton.setColor(sf::Color::White);
+        startButton.setFillColor(sf::Color::White);
     }
 
     if (exitButtonSelected)
     {
-        exitButton.setColor(sf::Color::Red);
+        exitButton.setFillColor(sf::Color::Red);
     }
     else
     {
-        exitButton.setColor(sf::Color::White);
+        exitButton.setFillColor(sf::Color::White);
     }
 
     if (startButtonPressed)
