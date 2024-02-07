@@ -9,7 +9,8 @@ enum ResourcesId
 {
     FONT = 0,
     BACKGROUND = 1,
-    SHIP = 2
+    SHIP = 2,
+    BULLET = 3
 };
 
 struct Backend
