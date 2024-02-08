@@ -104,11 +104,6 @@ void StartScreen::ProcessInput()
 }
 void StartScreen::Update(sf::Time deltaTime) 
 {
-    // for(float i =0; i < 30; i++)
-    // {
-    //     background.move(sf::Vector2f(0, 0.01));
-    // }
-
     if (startButtonSelected)
     {
         startButton.setFillColor(sf::Color::Green);
