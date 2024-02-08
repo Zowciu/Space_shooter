@@ -1,8 +1,9 @@
 #pragma once
 
+#include <SFML/Graphics.hpp>
 #include <SFML/Graphics/Texture.hpp>
-#include <SFML/Graphics/Sprite.hpp>
 #include <SFML/Graphics/Drawable.hpp>
+#include <SFML/Graphics/Sprite.hpp>
 
 class Ship : public sf::Drawable 
 {
