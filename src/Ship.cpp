@@ -1,5 +1,5 @@
 #include "Ship.hpp"
-#include <SFML/Graphics.hpp>
+
 Ship::Ship() : velocity(10.f, 10.f), scale(0.09f,0.09f){
 
 }
