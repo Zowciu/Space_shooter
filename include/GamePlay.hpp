@@ -1,11 +1,13 @@
 #pragma once
 
 #include <memory>
+#include <vector>
 #include <SFML/Graphics/Sprite.hpp>
 
 #include "State.hpp"
 #include "Game.hpp"
 #include "Ship.hpp"
+#include "Bullet.hpp"
 
 class GamePlay : public Engine::State
 {
@@ -19,6 +21,9 @@ private:
 
     Ship ship;
     sf::Vector2f shipDirection;
+
+    sf::Vector2f bulletDirection;
+    std::vector<std::shared_ptr<Bullet>> bullets;
 
 
 public:

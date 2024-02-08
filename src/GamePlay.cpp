@@ -3,7 +3,7 @@
 #include <iostream>
 
 GamePlay::GamePlay(std::shared_ptr<Backend> &backend, sf::RenderWindow* window) 
-    :backend(backend), window(window), shipDirection({0.f, 0.f})
+    :backend(backend), window(window), shipDirection({0.f, 0.f}), bulletDirection(0.f, -1.f)
 {
 
 }
@@ -16,6 +16,7 @@ void GamePlay::Init()
 {
     backend->resources->AddTexture(BACKGROUND, "Resources/background.png");
     backend->resources->AddTexture(SHIP, "Resources/ship.png");
+    backend->resources->AddTexture(BULLET, "Resources/fire_red.png");
 
     background1.setTexture(backend->resources->GetTexture(BACKGROUND));
     background2.setTexture(backend->resources->GetTexture(BACKGROUND));
@@ -25,6 +26,9 @@ void GamePlay::Init()
     ship.Init(backend->resources->GetTexture(SHIP));
     ship.SetPosition(backend->window->getSize().x / 2, 
                      backend->window->getSize().y - ship.GetGlobalBounds().height);
+
+    //bullet.Init(backend->resources->GetTexture(BULLET));
+
 }
 
 void GamePlay::ProcessInput()
@@ -48,12 +52,17 @@ void GamePlay::ProcessInput()
         {
             shipDirection = {0.f, 0.f};
         }
-        
+
+        //Bullet
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space))
+        {
+            auto bullet = std::make_shared<Bullet>(backend->resources->GetTexture(BULLET), 
+                                                   sf::Vector2f(ship.GetPosition().x + ship.GetGlobalBounds().width / 4,
+                                                                 ship.GetPosition().y + ship.GetGlobalBounds().height / 4));
+            bullets.push_back(bullet);
+        }
         
     }
-    
-
-
     
 }
 void GamePlay::Update(sf::Time deltaTime)
@@ -83,8 +92,27 @@ void GamePlay::Update(sf::Time deltaTime)
             ship.SetPosition(backend->window->getSize().x - ship.GetGlobalBounds().width,
                                 ship.GetPosition().y);
         }
+        for (auto& bulletPtr : bullets) 
+        {
+            bulletPtr->Move(sf::Vector2f(bulletDirection));
+        }
+
+        for (auto it = bullets.begin(); it != bullets.end();)
+        {
+            if ((*it)->GetPosition().y < 0)
+            {
+                it = bullets.erase(it);
+            }
+            else
+            {
+                it++;
+            }
+        }
+        
+
         time = sf::Time::Zero;
     }
+
     
 }
 void GamePlay::Draw() 
@@ -93,5 +121,9 @@ void GamePlay::Draw()
     backend->window->draw(background1);
     backend->window->draw(background2);
     backend->window->draw(ship);
+    //backend->window->draw(bullet);
+    for (const auto& bulletPtr : bullets) {
+        backend->window->draw(*bulletPtr);
+    }
     backend->window->display();
 }
