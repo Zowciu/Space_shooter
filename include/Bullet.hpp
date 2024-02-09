@@ -11,8 +11,8 @@ class Bullet : public sf::Drawable
 private:
     sf::Sprite bullet;
 
-    //sf::Vector2f velocity;
-    
+    //  sf::Vector2f velocity;
+
 public:
     Bullet(const sf::Texture &texture, sf::Vector2f position);
     ~Bullet();
