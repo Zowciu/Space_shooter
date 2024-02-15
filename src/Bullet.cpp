@@ -1,6 +1,6 @@
 #include "Bullet.hpp"
 
-Bullet::Bullet(const sf::Texture &texture, sf::Vector2f position)
+Bullet::Bullet(const sf::Texture &texture, sf::Vector2f position) : velocityY(4)
 {
     bullet.setTexture(texture);
     bullet.setPosition(position);
@@ -11,14 +11,9 @@ Bullet::~Bullet()
 {
 }
 
-void Bullet::Init(const sf::Texture &texture)
-{
-    bullet.setTexture(texture);
-}
-
 void Bullet::Move(sf::Vector2f direction)
 {
-    bullet.move(direction);
+    bullet.move(direction.x, direction.y * velocityY);
 }
 
 void Bullet::SetPosition(float position_x, float position_y)
