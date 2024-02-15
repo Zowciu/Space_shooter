@@ -8,6 +8,7 @@
 #include "Game.hpp"
 #include "Ship.hpp"
 #include "Bullet.hpp"
+#include "Enemy.hpp"
 
 class GamePlay : public Engine::State
 {
@@ -18,6 +19,7 @@ private:
     sf::Sprite background1;
     sf::Sprite background2;
     sf::Time time;
+    sf::Time time2;
 
     Ship ship;
     sf::Vector2f shipDirection;
@@ -25,6 +27,9 @@ private:
     sf::Vector2f bulletDirection;
     std::vector<std::shared_ptr<Bullet>> bullets;
 
+    sf::Vector2f enemyShipDirection;
+    std::vector<std::shared_ptr<Enemy>> enemies;
+    int enemySpawnTime = 2;
 
 public:
     GamePlay(std::shared_ptr<Backend> &backend, sf::RenderWindow* window);
