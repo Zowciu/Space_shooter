@@ -1,5 +1,6 @@
 #include <SFML/Window/Event.hpp>
 #include "GamePlay.hpp"
+#include "EndScreen.hpp"
 #include <iostream>
 
 GamePlay::GamePlay(std::shared_ptr<Backend> &backend, sf::RenderWindow *window)
@@ -151,7 +152,7 @@ void GamePlay::Update(sf::Time deltaTime)
         {
             if (ship.GetGlobalBounds().intersects((*enemyPtr)->GetGlobalBounds()))
             {
-                std::cout<< "Game over \n";
+                backend->states->AddState(std::make_unique<EndScreen>(backend, backend->window.get()));
             }
         }
 
