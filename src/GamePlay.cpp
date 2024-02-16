@@ -55,13 +55,10 @@ void GamePlay::ProcessInput()
             shipDirection = {0.f, 0.f};
         }
 
-        // Adding bullet to vector 
+        // Shield
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space))
         {
-            auto bullet = std::make_shared<Bullet>(backend->resources->GetTexture(BULLET),
-                                                   sf::Vector2f(ship.GetPosition().x + ship.GetGlobalBounds().width / 4,
-                                                                ship.GetPosition().y + ship.GetGlobalBounds().height / 4));
-            bullets.push_back(bullet);
+            // TODO : shield function
         }
     }
 }
@@ -69,6 +66,7 @@ void GamePlay::Update(sf::Time deltaTime)
 {
     time += deltaTime;
     time2 += deltaTime;
+    time3 += deltaTime;
 
     if (time.asSeconds() > 0.015)
     {
@@ -97,7 +95,17 @@ void GamePlay::Update(sf::Time deltaTime)
                              ship.GetPosition().y);
         }
 
-        //Bullets
+        //Bullets spawn
+        if (time2.asSeconds() > 1)
+        {
+            auto bullet = std::make_shared<Bullet>(backend->resources->GetTexture(BULLET),
+                                                   sf::Vector2f(ship.GetPosition().x + ship.GetGlobalBounds().width / 4,
+                                                                ship.GetPosition().y + ship.GetGlobalBounds().height / 4));
+            bullets.push_back(bullet);
+            time2 = sf::Time::Zero;
+        }
+
+        //Bullets move
         for (auto &bulletPtr : bullets)
         {
             bulletPtr->Move(sf::Vector2f(bulletDirection));
@@ -105,15 +113,15 @@ void GamePlay::Update(sf::Time deltaTime)
         
         // Enemies spawn
         std::srand(static_cast<unsigned int>(std::time(nullptr))); // Setting the seed of the pseudo-random number generator based on the current time
-        if (time2.asSeconds() > enemySpawnTime)
+        if (time3.asSeconds() > enemySpawnTime)
         {
             auto enemyship = std::make_shared<Enemy>(backend->resources->GetTexture(ENEMYSHIP), 
                                                     sf::Vector2f( rand() % (backend->window->getSize().x - 70), 0));
             enemies.push_back(enemyship);
-            time2 = sf::Time::Zero;
+            time3 = sf::Time::Zero;
         }
 
-
+        // Enemies move
         if (!enemies.empty())
         {
             for (auto &enemyPtr : enemies)
@@ -122,7 +130,7 @@ void GamePlay::Update(sf::Time deltaTime)
             }
         }
         
-        //combat
+        // Combat
         for (auto bulletPtr = bullets.begin(); bulletPtr != bullets.end();)
         {
             bool bulletErased = false;
@@ -147,7 +155,6 @@ void GamePlay::Update(sf::Time deltaTime)
             }
         }
 
-
         for (auto enemyPtr = enemies.begin(); enemyPtr != enemies.end(); enemyPtr++)
         {
             if (ship.GetGlobalBounds().intersects((*enemyPtr)->GetGlobalBounds()))
@@ -155,21 +162,7 @@ void GamePlay::Update(sf::Time deltaTime)
                 backend->states->AddState(std::make_unique<EndScreen>(backend, backend->window.get()));
             }
         }
-
-        // for (size_t i = 0; i < enemies.size(); i++)
-        // {
-        //     for (size_t j = 0; j < bullets.size(); j++)
-        //     {
-        //         if(enemies[i]->GetGlobalBounds().intersects(bullets[j]->GetGlobalBounds()))
-        //         {
-        //             enemies.erase(enemies.begin() + i);
-        //             bullets.erase(bullets.begin() + j);
-        //         }
-        //     }    
-        // }
         
-
-
         // Erasing bullet if not in window
         for (auto it = bullets.begin(); it != bullets.end();)
         {

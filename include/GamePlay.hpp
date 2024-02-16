@@ -20,6 +20,7 @@ private:
     sf::Sprite background2;
     sf::Time time;
     sf::Time time2;
+    sf::Time time3;
 
     Ship ship;
     sf::Vector2f shipDirection;
