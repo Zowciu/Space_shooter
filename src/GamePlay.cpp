@@ -133,19 +133,26 @@ void GamePlay::Update(sf::Time deltaTime)
         // Erasing bullets and enemies when they intersect
         for (auto bulletPtr = bullets.begin(); bulletPtr != bullets.end();)
         {
+            bool bulletErased = false;
             for (auto enemyPtr = enemies.begin(); enemyPtr != enemies.end();)
             {
                 if ((*bulletPtr)->GetGlobalBounds().intersects((*enemyPtr)->GetGlobalBounds()))
                 {
                     bulletPtr = bullets.erase(bulletPtr);     
                     enemyPtr = enemies.erase(enemyPtr); 
+                    bulletErased = true;
                 }
                 else
                 {
                     ++enemyPtr;
                 }
             }
-            bulletPtr++;
+            if (!bulletErased)
+            {
+                bulletPtr++;
+            }
+            
+            
         }
 
         //changing state if player(ship) dies
