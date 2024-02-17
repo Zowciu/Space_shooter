@@ -19,14 +19,16 @@ private:
     sf::Sprite background1;
     sf::Sprite background2;
     sf::Time time;
-    sf::Time time2;
-    sf::Time time3;
+    sf::Time timeBullet;
+    sf::Time timeEnemy;
+
 
     Ship ship;
     sf::Vector2f shipDirection;
 
     sf::Vector2f bulletDirection;
     std::vector<std::shared_ptr<Bullet>> bullets;
+    int bulletSpawnTime = 2;
 
     sf::Vector2f enemyShipDirection;
     std::vector<std::shared_ptr<Enemy>> enemies;

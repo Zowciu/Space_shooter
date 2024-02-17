@@ -41,7 +41,7 @@ void GamePlay::ProcessInput()
             backend->window->close();
         }
 
-        //Ship changing direction
+        //Ship direction
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::A))
         {
             shipDirection = {-1.f, 0.f};
@@ -65,8 +65,28 @@ void GamePlay::ProcessInput()
 void GamePlay::Update(sf::Time deltaTime)
 {
     time += deltaTime;
-    time2 += deltaTime;
-    time3 += deltaTime;
+    timeBullet += deltaTime;
+    timeEnemy += deltaTime;
+
+    //Bullets spawn
+    if (timeBullet.asSeconds() > bulletSpawnTime)
+    {
+        auto bullet = std::make_shared<Bullet>(backend->resources->GetTexture(BULLET),
+                                                sf::Vector2f(ship.GetPosition().x + ship.GetGlobalBounds().width / 4,
+                                                            ship.GetPosition().y + ship.GetGlobalBounds().height / 4));
+        bullets.push_back(bullet);
+        timeBullet = sf::Time::Zero;
+    }
+
+    // Enemies spawn
+    std::srand(static_cast<unsigned int>(std::time(nullptr))); // Setting the seed of the pseudo-random number generator based on the current time
+    if (timeEnemy.asSeconds() > enemySpawnTime)
+    {
+        auto enemyship = std::make_shared<Enemy>(backend->resources->GetTexture(ENEMYSHIP), 
+                                                sf::Vector2f( rand() % (backend->window->getSize().x - 70), 0));
+        enemies.push_back(enemyship);
+        timeEnemy = sf::Time::Zero;
+    }
 
     if (time.asSeconds() > 0.015)
     {
@@ -95,33 +115,13 @@ void GamePlay::Update(sf::Time deltaTime)
                              ship.GetPosition().y);
         }
 
-        //Bullets spawn
-        if (time2.asSeconds() > 1)
-        {
-            auto bullet = std::make_shared<Bullet>(backend->resources->GetTexture(BULLET),
-                                                   sf::Vector2f(ship.GetPosition().x + ship.GetGlobalBounds().width / 4,
-                                                                ship.GetPosition().y + ship.GetGlobalBounds().height / 4));
-            bullets.push_back(bullet);
-            time2 = sf::Time::Zero;
-        }
-
-        //Bullets move
+        //Bullets movement
         for (auto &bulletPtr : bullets)
         {
             bulletPtr->Move(sf::Vector2f(bulletDirection));
         }
-        
-        // Enemies spawn
-        std::srand(static_cast<unsigned int>(std::time(nullptr))); // Setting the seed of the pseudo-random number generator based on the current time
-        if (time3.asSeconds() > enemySpawnTime)
-        {
-            auto enemyship = std::make_shared<Enemy>(backend->resources->GetTexture(ENEMYSHIP), 
-                                                    sf::Vector2f( rand() % (backend->window->getSize().x - 70), 0));
-            enemies.push_back(enemyship);
-            time3 = sf::Time::Zero;
-        }
 
-        // Enemies move
+        // Enemies movement
         if (!enemies.empty())
         {
             for (auto &enemyPtr : enemies)
@@ -130,31 +130,25 @@ void GamePlay::Update(sf::Time deltaTime)
             }
         }
         
-        // Combat
+        // Erasing bullets and enemies when they intersect
         for (auto bulletPtr = bullets.begin(); bulletPtr != bullets.end();)
         {
-            bool bulletErased = false;
-
             for (auto enemyPtr = enemies.begin(); enemyPtr != enemies.end();)
             {
                 if ((*bulletPtr)->GetGlobalBounds().intersects((*enemyPtr)->GetGlobalBounds()))
                 {
                     bulletPtr = bullets.erase(bulletPtr);     
                     enemyPtr = enemies.erase(enemyPtr); 
-                    bulletErased = true;
                 }
                 else
                 {
                     ++enemyPtr;
                 }
             }
-
-            if (!bulletErased) 
-            {
-                ++bulletPtr;
-            }
+            bulletPtr++;
         }
 
+        //changing state if player(ship) dies
         for (auto enemyPtr = enemies.begin(); enemyPtr != enemies.end(); enemyPtr++)
         {
             if (ship.GetGlobalBounds().intersects((*enemyPtr)->GetGlobalBounds()))
@@ -175,6 +169,19 @@ void GamePlay::Update(sf::Time deltaTime)
                 it++;
             }
         }
+
+        // Erasing enemies if not in window
+        for (auto it = enemies.begin(); it != enemies.end();)
+        {
+            if ((*it)->GetPosition().y >= backend->window->getSize().y)
+            {
+                it = enemies.erase(it); 
+            }
+            else
+            {
+                it++;
+            }
+        }
         time = sf::Time::Zero;
     }
 }
@@ -185,8 +192,6 @@ void GamePlay::Draw()
     backend->window->draw(background1);
     backend->window->draw(background2);
     backend->window->draw(ship);
-    // backend->window->draw(enemyship);
-    // backend->window->draw(bullet);
     for (const auto &bulletPtr : bullets)
     {
         backend->window->draw(*bulletPtr);
