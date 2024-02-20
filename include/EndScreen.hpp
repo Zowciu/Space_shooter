@@ -14,7 +14,11 @@ private:
     std::unique_ptr<sf::RenderWindow> window;
     sf::Sprite background;
     sf::Text gameOverText;
-    sf::Text score;
+    sf::Text scoreText;
+    sf::Text scoreIntText;
+    
+    int score;
+    std::string scoreString;
 
     sf::Text startButton;
     sf::Text exitButton;
@@ -26,7 +30,7 @@ private:
     bool exitButtonPressed;
 
 public:
-    EndScreen(std::shared_ptr<Backend> &backend, sf::RenderWindow* window);
+    EndScreen(std::shared_ptr<Backend> &backend, sf::RenderWindow* window, int &score);
     ~EndScreen();
 
     void Init() override;

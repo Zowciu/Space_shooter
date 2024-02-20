@@ -1,8 +1,9 @@
 #include "EndScreen.hpp"
 #include <SFML/Window/Event.hpp>
 #include "GamePlay.hpp"
-EndScreen::EndScreen(std::shared_ptr<Backend> &backend, sf::RenderWindow* window)
-    : backend(backend),  window(window), startButtonSelected(false), startButtonPressed(false), 
+#include <iostream>
+EndScreen::EndScreen(std::shared_ptr<Backend> &backend, sf::RenderWindow* window, int &score)
+    : backend(backend),  window(window), score(score), startButtonSelected(false), startButtonPressed(false), 
     exitButtonSelected(false), exitButtonPressed(false)
 {
 
@@ -22,11 +23,19 @@ void EndScreen::Init()
     gameOverText.setOrigin(gameOverText.getLocalBounds().width / 2, 0);
     gameOverText.setPosition(backend->window->getSize().x / 2, 0);
 
-    score.setFont(backend->resources->GetFont(FONT));
-    score.setString("Score: ");
-    score.setCharacterSize(60);
-    score.setOrigin(score.getLocalBounds().width / 2, 0);
-    score.setPosition(backend->window->getSize().x / 2, gameOverText.getLocalBounds().height * 2);
+    scoreText.setFont(backend->resources->GetFont(FONT));
+    scoreText.setString("Score: ");
+    scoreText.setCharacterSize(60);
+    scoreText.setOrigin(scoreText.getLocalBounds().width / 2, 0);
+    scoreText.setPosition(backend->window->getSize().x / 2, gameOverText.getLocalBounds().height * 2);
+    
+    scoreString = std::to_string(score);
+    scoreIntText.setFont(backend->resources->GetFont(FONT));
+    scoreIntText.setString(scoreString);
+    scoreIntText.setCharacterSize(60);
+    scoreIntText.setOrigin(scoreText.getLocalBounds().width / 2, 0);
+    scoreIntText.setPosition(backend->window->getSize().x / 2 + scoreText.getGlobalBounds().width, gameOverText.getLocalBounds().height * 2);
+
 
     startButton.setFont(backend->resources->GetFont(FONT));
     startButton.setString("Play again");
@@ -39,17 +48,16 @@ void EndScreen::Init()
     exitButton.setCharacterSize(80);
     exitButton.setOrigin(exitButton.getLocalBounds().width / 2, 0);
     exitButton.setPosition(backend->window->getSize().x / 2, gameOverText.getLocalBounds().height * 8);
-
 }
 void EndScreen::ProcessInput()
 {
     sf::Event event;
     while (backend->window->pollEvent(event))
     {
+        
         sf::Vector2i mousePos = sf::Mouse::getPosition(*window);
         sf::FloatRect startButtonBounds = startButton.getGlobalBounds();
         sf::FloatRect exitButtonBounds = exitButton.getGlobalBounds();
-
         if (event.type == sf::Event::Closed)
         {
             backend->window->close();
@@ -86,6 +94,7 @@ void EndScreen::ProcessInput()
 }
 void EndScreen::Update(sf::Time deltaTime)
 {
+    
     if (startButtonSelected)
     {
         startButton.setFillColor(sf::Color::Green);
@@ -120,7 +129,8 @@ void EndScreen::Draw()
     backend->window->clear();
     backend->window->draw(background);
     backend->window->draw(gameOverText);
-    backend->window->draw(score);
+    backend->window->draw(scoreText);
+    backend->window->draw(scoreIntText);
     backend->window->draw(startButton);
     backend->window->draw(exitButton);
     backend->window->display();

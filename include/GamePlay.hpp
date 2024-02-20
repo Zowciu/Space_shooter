@@ -22,7 +22,6 @@ private:
     sf::Time timeBullet;
     sf::Time timeEnemy;
 
-
     Ship ship;
     sf::Vector2f shipDirection;
 
@@ -33,6 +32,8 @@ private:
     sf::Vector2f enemyShipDirection;
     std::vector<std::shared_ptr<Enemy>> enemies;
     int enemySpawnTime = 2;
+
+    int score;
 
 public:
     GamePlay(std::shared_ptr<Backend> &backend, sf::RenderWindow* window);

@@ -4,7 +4,7 @@
 #include <iostream>
 
 GamePlay::GamePlay(std::shared_ptr<Backend> &backend, sf::RenderWindow *window)
-    : backend(backend), window(window), shipDirection({0.f, 0.f}), bulletDirection(0.f, -1.f), enemyShipDirection(0.f, 1.f)
+    : backend(backend), window(window), shipDirection({0.f, 0.f}), bulletDirection(0.f, -1.f), enemyShipDirection(0.f, 1.f), score(0)
 {
 }
 
@@ -141,6 +141,7 @@ void GamePlay::Update(sf::Time deltaTime)
                     bulletPtr = bullets.erase(bulletPtr);     
                     enemyPtr = enemies.erase(enemyPtr); 
                     bulletErased = true;
+                    score += 10;
                 }
                 else
                 {
@@ -160,7 +161,7 @@ void GamePlay::Update(sf::Time deltaTime)
         {
             if (ship.GetGlobalBounds().intersects((*enemyPtr)->GetGlobalBounds()))
             {
-                backend->states->AddState(std::make_unique<EndScreen>(backend, backend->window.get()));
+                backend->states->AddState(std::make_unique<EndScreen>(backend, backend->window.get(), score));
             }
         }
         
