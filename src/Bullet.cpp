@@ -31,7 +31,7 @@ sf::FloatRect Bullet::GetGlobalBounds()
     return bullet.getGlobalBounds();
 }
 
-void Bullet::draw(sf::RenderTarget &target, sf::RenderStates states) const
+void Bullet::draw(sf::RenderTarget &target, [[maybe_unused]] sf::RenderStates states) const
 {
     target.draw(bullet);
 }

@@ -24,7 +24,7 @@ sf::FloatRect Enemy::GetGlobalBounds()
 {
     return enemy.getGlobalBounds();
 }
-void Enemy::draw(sf::RenderTarget &target, sf::RenderStates states) const
+void Enemy::draw(sf::RenderTarget &target, [[maybe_unused]] sf::RenderStates states) const
 {
     target.draw(enemy);
 }
