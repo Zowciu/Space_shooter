@@ -11,7 +11,8 @@ enum ResourcesId
     BACKGROUND = 1,
     SHIP = 2,
     BULLET = 3,
-    ENEMYSHIP = 4
+    ENEMYSHIP = 4,
+    SHIELD = 5
 };
 
 struct Backend
