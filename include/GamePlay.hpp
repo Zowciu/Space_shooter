@@ -21,6 +21,7 @@ private:
     sf::Time time;
     sf::Time timeBullet;
     sf::Time timeEnemy;
+    sf::Time shieldTimer;
 
     Ship ship;
     sf::Vector2f shipDirection;

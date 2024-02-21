@@ -18,6 +18,7 @@ void GamePlay::Init()
     backend->resources->AddTexture(SHIP, "Resources/ship.png");
     backend->resources->AddTexture(BULLET, "Resources/fire_red.png");
     backend->resources->AddTexture(ENEMYSHIP, "Resources/enemy.png");
+    backend->resources->AddTexture(SHIELD, "Resources/shield.png");
 
 
     background1.setTexture(backend->resources->GetTexture(BACKGROUND));
@@ -25,7 +26,9 @@ void GamePlay::Init()
     background2.setPosition(0, 0 - background1.getLocalBounds().height);
     
 
-    ship.Init(backend->resources->GetTexture(SHIP));
+    ship.Init(backend->resources->GetTexture(SHIP), 
+              backend->resources->GetTexture(SHIELD));
+
     ship.SetPosition(backend->window->getSize().x / 2,
                      backend->window->getSize().y - ship.GetGlobalBounds().height);
 
@@ -58,7 +61,7 @@ void GamePlay::ProcessInput()
         // Shield
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space))
         {
-            // TODO : shield function
+            ship.ActivateShield();
         }
     }
 }
@@ -67,7 +70,7 @@ void GamePlay::Update(sf::Time deltaTime)
     time += deltaTime;
     timeBullet += deltaTime;
     timeEnemy += deltaTime;
-
+    
     //Bullets spawn
     if (timeBullet.asSeconds() > bulletSpawnTime)
     {
@@ -86,6 +89,19 @@ void GamePlay::Update(sf::Time deltaTime)
                                                 sf::Vector2f( rand() % (backend->window->getSize().x - 70), 0));
         enemies.push_back(enemyship);
         timeEnemy = sf::Time::Zero;
+    }
+
+    //ship shield time
+    if (ship.isShieldActive())
+    {
+        ship.SetShieldPosition();
+        shieldTimer += deltaTime;
+        if (shieldTimer.asSeconds() > 2)
+        {
+            ship.DeactivateShield();
+            shieldTimer = sf::Time::Zero;
+        }
+        
     }
 
     if (time.asSeconds() > 0.015)
@@ -114,7 +130,7 @@ void GamePlay::Update(sf::Time deltaTime)
             ship.SetPosition(backend->window->getSize().x - ship.GetGlobalBounds().width,
                              ship.GetPosition().y);
         }
-
+        
         //Bullets movement
         for (auto &bulletPtr : bullets)
         {
@@ -159,7 +175,7 @@ void GamePlay::Update(sf::Time deltaTime)
         //changing state if player(ship) dies
         for (auto enemyPtr = enemies.begin(); enemyPtr != enemies.end(); enemyPtr++)
         {
-            if (ship.GetGlobalBounds().intersects((*enemyPtr)->GetGlobalBounds()))
+            if (ship.GetGlobalBounds().intersects((*enemyPtr)->GetGlobalBounds()) && !ship.isShieldActive()) 
             {
                 backend->states->AddState(std::make_unique<EndScreen>(backend, backend->window.get(), score));
             }
