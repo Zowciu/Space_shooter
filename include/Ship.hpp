@@ -9,17 +9,30 @@ class Ship : public sf::Drawable
 {
 private:
     sf::Sprite ship;
+    sf::Sprite shield;
+    
+    sf::Vector2f shipScale;
+    sf::Vector2f shieldScale;
 
     sf::Vector2f velocity;
-    sf::Vector2f scale;
+
+    bool shieldActive;
+    int shieldOffsetX = -22;
+    int shieldOffsetY = -5;
+
 public:
     Ship();
     ~Ship();
 
-    void Init(const sf::Texture &texture);
+    void Init(const sf::Texture &shipTexture, const sf::Texture &shieldTexture);
     void Move(sf::Vector2f direction);
     void SetPosition(float position_x, float position_y);
     sf::Vector2f GetPosition();
     sf::FloatRect GetGlobalBounds();
+    void ActivateShield();
+    void DeactivateShield();
+    bool isShieldActive();
+    void SetShieldPosition();
+    
     void draw(sf::RenderTarget &target, sf::RenderStates states) const override;
 };
